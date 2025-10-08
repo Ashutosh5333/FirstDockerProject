@@ -10,5 +10,16 @@
       "role": "Software Engineer",
       "organization": "Acn Healthcare"
     }
+  },
+  "14a64852b5f9bf73ca74134244de4f2f1fcace060e81d36a8cafc6371609c720": {
+    "id": "14a64852b5f9bf73ca74134244de4f2f1fcace060e81d36a8cafc6371609c720",
+    "issued_at": "2025-10-08T17:34:48.983Z",
+    "worker_id": "worker-1",
+    "credential": {
+      "name": "Ashutosh Lakshakar",
+      "role": "Software Engineer",
+      "issued_for": "Onboarding",
+      "expiry": "2026-10-07"
+    }
   }
 }

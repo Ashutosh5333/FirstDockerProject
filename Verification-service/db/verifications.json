@@ -64,5 +64,11 @@
     "verified_at": "2025-10-08T17:27:38.548Z",
     "verifier_worker_id": "worker-1",
     "result": "invalid"
+  },
+  {
+    "id": "14a64852b5f9bf73ca74134244de4f2f1fcace060e81d36a8cafc6371609c720",
+    "verified_at": "2025-10-08T17:35:37.574Z",
+    "verifier_worker_id": "worker-1",
+    "result": "valid"
   }
 ]
