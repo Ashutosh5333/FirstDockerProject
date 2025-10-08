@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { loadDb, saveDb } from "./db.js";
-import { computeCredentialId } from "./utils.js";
+import { computeCredentialId } from "./util.js";
 import { IssuedRecord } from "./types.js";
+import { loadDb, saveDb } from "./utils/loadDb.js";
 
 
 const router = Router();
