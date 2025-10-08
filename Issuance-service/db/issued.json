@@ -1,0 +1,14 @@
+{
+  "29495e91a70651bd1222ef9ca98d5c307dcba1458ea59f7a2a51103b27a0f895": {
+    "id": "29495e91a70651bd1222ef9ca98d5c307dcba1458ea59f7a2a51103b27a0f895",
+    "issued_at": "2025-10-08T17:17:38.016Z",
+    "worker_id": "worker-1",
+    "credential": {
+      "id": "credential12345",
+      "name": "Ashutosh Lakshakar",
+      "email": "ashutosh@example.com",
+      "role": "Software Engineer",
+      "organization": "Acn Healthcare"
+    }
+  }
+}
