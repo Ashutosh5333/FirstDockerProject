@@ -1,45 +1,48 @@
-import { Router } from "express";
-import fs from "fs";
-import path from "path";
+import express from "express";
+import { readJson, writeJson, VERIFICATION_LOG_FILE } from "./db.js";
 import { computeCredentialId } from "./utils.js";
-import { VerificationLog } from "./types.js";
-import { loadLogs, saveLogs } from "./db.js";
+import { IssuedRecord, VerificationLog } from "./types.js";
 
-const router = Router();
+const router = express.Router();
 const WORKER_ID = process.env.WORKER_ID ?? "worker-1";
 
-// Issued DB path (point to Issuance service DB)
-const ISSUED_DB_PATH = process.env.ISSUED_DB_PATH ?? path.join(__dirname, "..", "..", "Issuance-service", "db", "issued.json");
+// For simplicity, point to issuer DB via env
+const ISSUED_DB_PATH = process.env.ISSUED_DB_PATH!;
 
-// Health check
 router.get("/health", (_req, res) => {
   res.json({ status: "ok", worker_id: WORKER_ID });
 });
 
-// Verify credential
 router.post("/verify", (req, res) => {
   const credential = req.body;
   const id = computeCredentialId(credential);
 
-  // Read Issuance DB
-  let issuedDb: Record<string, any> = {};
-  if (fs.existsSync(ISSUED_DB_PATH)) {
-    const raw = fs.readFileSync(ISSUED_DB_PATH, "utf8");
-    if (raw.trim()) issuedDb = JSON.parse(raw);
-  }
-
+  const issuedDb = readJson<Record<string, IssuedRecord>>(ISSUED_DB_PATH, {});
   const found = issuedDb[id];
+
   const verified_at = new Date().toISOString();
-  const logs: VerificationLog[] = loadLogs();
+  const logs = readJson<VerificationLog[]>(VERIFICATION_LOG_FILE, []);
 
   if (!found) {
-    logs.push({ id, verified_at, verifier_worker_id: WORKER_ID, result: "invalid" });
-    saveLogs(logs);
-    return res.status(404).json({ valid: false, id, message: "credential not issued" });
+    logs.push({
+      id,
+      verified_at,
+      verifier_worker_id: WORKER_ID,
+      result: "invalid",
+    });
+    writeJson(VERIFICATION_LOG_FILE, logs);
+    return res
+      .status(404)
+      .json({ valid: false, id, message: "credential not issued" });
   }
 
-  logs.push({ id, verified_at, verifier_worker_id: WORKER_ID, result: "valid" });
-  saveLogs(logs);
+  logs.push({
+    id,
+    verified_at,
+    verifier_worker_id: WORKER_ID,
+    result: "valid",
+  });
+  writeJson(VERIFICATION_LOG_FILE, logs);
 
   return res.json({
     valid: true,
