@@ -1,9 +1,6 @@
 import { Router } from "express";
-import { computeCredentialId } from "./util.js";
 import { IssuedRecord } from "./types.js";
-import { loadDb, saveDb } from "./utils/loadDb.js";
-
-
+import { computeCredentialId, loadDb, saveDb } from "./utils/loadDb.js";
 const router = Router();
 const WORKER_ID = process.env.WORKER_ID ?? "worker-1";
 
