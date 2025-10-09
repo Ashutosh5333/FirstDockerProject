@@ -6,5 +6,8 @@ module.exports = {
       '^.+\\.ts$': ['ts-jest', { useESM: true }],
     },
     extensionsToTreatAsEsm: ['.ts'],
+    moduleNameMapper: {
+      '^(\\.{1,2}/.*)\\.js$': '$1', // allow .ts imports without .js suffix
+    },
   };
   

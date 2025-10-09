@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
     /* === File Layout === */
-    // "rootDir": "./src",
-    // "outDir": "./dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
 
     /* === Environment Settings === */
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    // "moduleResolution": "Bundler",
     "target": "ES2022",
     "lib": ["ES2022"],
-    "types": ["node","jest"],
+    "types": ["node", "jest"],
 
     /* === Output Options === */
     "sourceMap": true,
@@ -23,17 +22,11 @@
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+    "isolatedModules": true,         
 
     /* === Interop & Module Behavior === */
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-
-    /* === Optional Cleanup === */
-    // Remove the following because they cause your current error:
-    // "verbatimModuleSyntax": true,
-    // "isolatedModules": true,
-    // "noUncheckedSideEffectImports": true,
-    // "moduleDetection": "force"
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src","tests"]
+  "include": ["src", "tests"]
 }

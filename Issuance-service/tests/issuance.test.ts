@@ -2,15 +2,20 @@ import request from "supertest";
 import express from "express";
 import fs from "fs";
 import path from "path";
-import routes from "../src/route"
-import { computeCredentialId, stableStringify } from "../src/util";
+import routes from "../src/route.js"
+import { computeCredentialId, stableStringify } from "../src/util.js";
+import { fileURLToPath } from "url";
+
+// reconstruct __dirname in ESM
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 app.use("/", routes);
 
-// const TEST_DB_FILE = path.join(__dirname, "issued_test.json");
-// 1️⃣ Set TEST_DB_FILE before importing your app or routes
+
 process.env.TEST_DB_FILE = path.join(__dirname, "issued_test.json");
 
 
