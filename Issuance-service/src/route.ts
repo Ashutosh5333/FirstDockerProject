@@ -27,7 +27,7 @@ router.post("/issue", (req, res) => {
 
   // ✅ Check if a credential with the same name & password already exists
   const duplicate: IssuedRecord | undefined = Object.values(db).find(
-    (rec: IssuedRecord) =>
+    (rec: any) =>
       rec.credential.name === credential.name &&
       rec.credential.password === credential.password
   );
