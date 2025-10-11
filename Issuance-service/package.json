@@ -6,7 +6,7 @@
   "scripts": {
    "dev": "ts-node-dev --loader ts-node/esm --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node --loader ts-node/esm src/index.ts",
+    "start": "nodemon --loader ts-node/esm src/index.ts",
     "prod": "node dist/src/index.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },

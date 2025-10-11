@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { IssuedRecord } from "./types.js";
+import { Credential, IssuedRecord, IssueResponse } from "./types.js";
 import { computeCredentialId, loadDb, saveDb } from "./utils/loadDb.js";
 const router = Router();
 const WORKER_ID = process.env.WORKER_ID ?? "worker-1";
@@ -18,33 +18,57 @@ router.get("/issued/:id", (req, res) => {
   return res.json(rec);
 });
 
-// Issue a new credential
-router.post("/issue", (req, res) => {
-  const credential = req.body;
-  const id = computeCredentialId(credential);
 
-  const db = loadDb();
-  const existing = db[id];
+router.post("/issue", (req, res) => {
+  const credential: Credential = req.body;
+  const id: string = computeCredentialId(credential);
+
+  const db: Record<string, IssuedRecord> = loadDb();
+
+  // ✅ Check if a credential with the same name & password already exists
+  const duplicate: IssuedRecord | undefined = Object.values(db).find(
+    (rec: IssuedRecord) =>
+      rec.credential.name === credential.name &&
+      rec.credential.password === credential.password
+  );
+
+  if (duplicate) {
+    const response: IssueResponse = {
+      message: "Credential with the same name and password already exists",
+      id: duplicate.id,
+      issued_at: duplicate.issued_at,
+      worker_id: duplicate.worker_id,
+    };
+    return res.status(409).json(response);
+  }
+
+  // Check if credential ID already exists (full payload)
+  const existing: IssuedRecord | undefined = db[id];
   if (existing) {
-    return res.status(200).json({
-      message: "credential already issued",
+    const response: IssueResponse = {
+      message: "Credential already issued",
       id,
       issued_at: existing.issued_at,
       worker_id: existing.worker_id,
-    });
+    };
+    return res.status(200).json(response);
   }
 
-  const issued_at = new Date().toISOString();
+  const issued_at: string = new Date().toISOString();
   const record: IssuedRecord = { id, issued_at, worker_id: WORKER_ID, credential };
   db[id] = record;
   saveDb(db);
 
-  return res.status(201).json({
-    message: `credential issued by ${WORKER_ID}`,
+  const response: IssueResponse = {
+    message: `Credential issued by ${WORKER_ID}`,
     id,
     issued_at,
     worker_id: WORKER_ID,
-  });
+  };
+
+  return res.status(201).json(response);
 });
+
+
 
 export default router;
