@@ -1,13 +1,20 @@
 import express from "express";
-import { readJson, writeJson, VERIFICATION_LOG_FILE } from "./db.js";
-import { computeCredentialId } from "./utils.js";
+import path from "path";
 import { IssuedRecord, VerificationLog } from "./types.js";
+import { computeCredentialId } from "./utils/cryptoUtils.js";
+import {
+  readJson,
+  writeJson,
+  VERIFICATION_LOG_FILE,
+} from "./utils/fileUtils.js";
+
 
 const router = express.Router();
 const WORKER_ID = process.env.WORKER_ID ?? "worker-1";
 
-// For simplicity, point to issuer DB via env
-const ISSUED_DB_PATH = process.env.ISSUED_DB_PATH!;
+const ISSUED_DB_PATH = path.resolve(
+  process.env.ISSUED_DB_PATH || "../Issuance-service/db/issued.json"
+);
 
 router.get("/health", (_req, res) => {
   res.json({ status: "ok", worker_id: WORKER_ID });
@@ -17,13 +24,16 @@ router.post("/verify", (req, res) => {
   const credential = req.body;
   const id = computeCredentialId(credential);
 
+  // ✅ Read the issued DB
   const issuedDb = readJson<Record<string, IssuedRecord>>(ISSUED_DB_PATH, {});
-  const found = issuedDb[id];
+  // console.log("Verifying ID:", id);
+  // console.log("Issued DB Path:", ISSUED_DB_PATH);
+  // console.log("Issued DB Keys:", Object.keys(issuedDb));
 
   const verified_at = new Date().toISOString();
   const logs = readJson<VerificationLog[]>(VERIFICATION_LOG_FILE, []);
 
-  if (!found) {
+  if (!issuedDb[id]) {
     logs.push({
       id,
       verified_at,
@@ -31,11 +41,13 @@ router.post("/verify", (req, res) => {
       result: "invalid",
     });
     writeJson(VERIFICATION_LOG_FILE, logs);
+
     return res
       .status(404)
-      .json({ valid: false, id, message: "credential not issued" });
+      .json({ valid: false, id, message: "Credential not issued" });
   }
 
+  const found = issuedDb[id];
   logs.push({
     id,
     verified_at,
